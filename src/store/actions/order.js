@@ -15,17 +15,18 @@ export const purchaseBurgerFail = (error) => {
   };
 };
 
-export const purchaseBurgerStart = () =>{
-    return {
-        type:actionTypes.PURSCHASE_BURGER_START,
-    }
-}
+export const purchaseBurgerStart = () => {
+  return {
+    type: actionTypes.PURSCHASE_BURGER_START,
+  };
+};
 
-export const purchaseBurger = (orderData) => {
+export const purchaseBurger = (orderData, token) => {
   return (dispatch) => {
-      dispatch(purchaseBurgerStart());
+    dispatch(purchaseBurgerStart());
+    
     axios
-      .post("/orders.json", orderData)
+      .post("/orders.json?auth=" + token, orderData)
       .then((res) => {
         dispatch(purchaseBurgerSuccess(res.data.name, orderData));
       })
@@ -35,62 +36,53 @@ export const purchaseBurger = (orderData) => {
   };
 };
 
+export const purchaseInit = () => {
+  return {
+    type: actionTypes.PURCHASE_INIT,
+  };
+};
 
-export const purchaseInit = ()=>{
-    return {
-        type: actionTypes.PURCHASE_INIT,
-    };
-
-}
-
-
-export const fetchOrdersSuccess = (orders)=>{
-    return{
-        type: actionTypes.FETCH_ORDERS_SUCCESS,
-        orders:orders,
-    }
-}
-
+export const fetchOrdersSuccess = (orders) => {
+  return {
+    type: actionTypes.FETCH_ORDERS_SUCCESS,
+    orders: orders,
+  };
+};
 
 export const fetchOrdersFail = (error) => {
   return {
     type: actionTypes.FETCH_ORDERS_FAIL,
-    error: error
-    
+    error: error,
   };
 };
 
+export const fetchOrderStart = () => {
+  return {
+    type: actionTypes.FETCH_ORDERS_START,
+  };
+};
 
-export const fetchOrderStart = ()=>{
-    return {
-        type: actionTypes.FETCH_ORDERS_START
-    }
-}
-
-export const fetchOrders = () =>{
-
-    return dispatch =>{
-        dispatch(fetchOrderStart());
-        axios
-          .get("/orders.json")
-          .then((res) => {
-            const fetchedOrders = [];
-            for (let key in res.data) {
-              fetchedOrders.push({
-                ...res.data[key],
-                id: key,
-              });
-            }
-            console.log(fetchedOrders);
-            dispatch(fetchOrdersSuccess(fetchedOrders));
-            //this.setState({ loading: false, orders: fetchedOrders });
-          })
-          .catch((err) => {
-           // this.setState({ loading: false });
-           dispatch(fetchOrdersFail(err));
+export const fetchOrders = (token,userId) => {
+  return (dispatch) => {
+    dispatch(fetchOrderStart());
+    const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId+'"';
+    axios
+      .get("/orders.json" + queryParams)
+      .then((res) => {
+        const fetchedOrders = [];
+        for (let key in res.data) {
+          fetchedOrders.push({
+            ...res.data[key],
+            id: key,
           });
-
-    }
-}
-
-
+        }
+        console.log(fetchedOrders);
+        dispatch(fetchOrdersSuccess(fetchedOrders));
+        //this.setState({ loading: false, orders: fetchedOrders });
+      })
+      .catch((err) => {
+        // this.setState({ loading: false });
+        dispatch(fetchOrdersFail(err));
+      });
+  };
+};
