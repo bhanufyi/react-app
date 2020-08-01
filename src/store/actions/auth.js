@@ -49,11 +49,11 @@ export const auth = (email, password, isSignup) => {
     };
 
     let url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCYSsCN_gT-5KSfN2t4mQr5aV3VlVyRWUo";
+      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=apikey";
 
     if (!isSignup) {
       url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCYSsCN_gT-5KSfN2t4mQr5aV3VlVyRWUo";
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=apikey";
     }
 
     axios
